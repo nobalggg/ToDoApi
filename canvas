@@ -1,166 +1,288 @@
 <html>
   <body>
-    <canvas id="myCanvas" width="700" height="700" style="border:1px solid #d3d3d3;">
+    <canvas
+      id="myCanvas"
+      width="700"
+      height="700"
+      style="border:1px solid #d3d3d3;"
+    >
       Your browser does not support the HTML5 canvas tag.</canvas
     >
 
     <script>
-      var outerNodeRadius = 10;
-      var innerNodeRadius = 5;
+      var canvas = document.getElementById('myCanvas');
+      var ctx = canvas.getContext('2d');
 
-      var canvas = document.getElementById("myCanvas");
-      var ctx = canvas.getContext("2d");
-      var canvasHeight = canvas.height;
-      var canvasWidth = canvas.width;
+      function run() {
+        ctx.lineWidth = 1;
+        ctx.fillStyle = '';
+        ctx.strokeStyle = '';
+        let outerNodeRadius = 10;
+        let innerNodeRadius = 5;
 
-      var firstLevelRadius = 80;
-      var firstLevelVertices = [];
+        let canvasHeight = canvas.height;
+        let canvasWidth = canvas.width;
 
-      var secondLevelRadius = 160;
-      var secondLevelVertices = [];
+        let firstLevelRadius = 80;
+        let firstLevelVertices = [];
 
-      var thirdLevelRadius = 240;
-      var thirdLevelVertices = [];
+        let secondLevelRadius = 160;
+        let secondLevelVertices = [];
 
-      createCentralCircle();
-      let angle = 0;
-      for (let i = 1; i <= 6; i++) {
-        angle = angle + 60;
-        let x = canvasWidth / 2 + firstLevelRadius * Math.cos((-angle * Math.PI) / 180);
-        let y = canvasHeight / 2 + firstLevelRadius * Math.sin((-angle * Math.PI) / 180);
-        firstLevelVertices.push({ x: x, y: y });
-        createNode(x, y, i);
-      }
+        let thirdLevelRadius = 240;
+        let thirdLevelVertices = [];
 
-      let angle2 = 15;
-      for (let i = 1; i <= 12; i++) {
-        angle2 = angle2 + 30;
-        let x = canvasWidth / 2 + secondLevelRadius * Math.cos((-angle2 * Math.PI) / 180);
-        let y = canvasHeight / 2 + secondLevelRadius * Math.sin((-angle2 * Math.PI) / 180);
-        secondLevelVertices.push({ x: x, y: y });
-        createNode(x, y, i);
-      }
-
-      let angle3 = 50;
-      for (let i = 1; i <= 24; i++) {
-        angle3 = angle3 + 15;
-        let x = canvasWidth / 2 + thirdLevelRadius * Math.cos((-angle3 * Math.PI) / 180);
-        let y = canvasHeight / 2 + thirdLevelRadius * Math.sin((-angle3 * Math.PI) / 180);
-        thirdLevelVertices.push({ x: x, y: y });
-        createNode(x, y, i);
-      }
-
-      for (let i = 0; i < 12; i++) {
-        if (i % 2 == 0) {
-          ctx.beginPath();
-          ctx.moveTo(secondLevelVertices[i].x, secondLevelVertices[i].y);
-          ctx.lineTo(firstLevelVertices[i / 2].x, firstLevelVertices[i / 2].y);
-          ctx.strokeStyle = "#d3d3d3";
-          ctx.stroke();
-        } else {
-          let j = i - 1;
-          ctx.beginPath();
-          ctx.moveTo(secondLevelVertices[i].x, secondLevelVertices[i].y);
-          ctx.lineTo(firstLevelVertices[j / 2].x, firstLevelVertices[j / 2].y);
-          ctx.strokeStyle = "#d3d3d3";
-          ctx.stroke();
+        createCentralCircle();
+        let angle = 0;
+        for (let i = 1; i <= 6; i++) {
+          angle = angle + 60;
+          let x =
+            canvasWidth / 2 +
+            firstLevelRadius * Math.cos((-angle * Math.PI) / 180);
+          let y =
+            canvasHeight / 2 +
+            firstLevelRadius * Math.sin((-angle * Math.PI) / 180);
+          firstLevelVertices.push({ x: x, y: y });
+          createNode(x, y, i);
         }
-      }
 
-      for (let i = 0; i < 6; i++) {
-        ctx.beginPath();
-        ctx.moveTo(firstLevelVertices[i].x, firstLevelVertices[i].y);
-        ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
-        ctx.stroke();
-      }
+        let angle2 = 15;
+        for (let i = 1; i <= 12; i++) {
+          angle2 = angle2 + 30;
+          let x =
+            canvasWidth / 2 +
+            secondLevelRadius * Math.cos((-angle2 * Math.PI) / 180);
+          let y =
+            canvasHeight / 2 +
+            secondLevelRadius * Math.sin((-angle2 * Math.PI) / 180);
+          secondLevelVertices.push({ x: x, y: y });
+          createNode(x, y, i);
+        }
 
-      function calcWaypoints(vertices) {
-        let waypoints = [];
-        for (let i = 1; i < vertices.length; i++) {
-          let pt0 = vertices[i - 1];
-          let pt1 = vertices[i];
-          let dx = pt1.x - pt0.x;
-          let dy = pt1.y - pt0.y;
-          for (var j = 0; j < 100; j++) {
-            let x = pt0.x + (dx * j) / 100;
-            let y = pt0.y + (dy * j) / 100;
-            waypoints.push({ x: x, y: y });
+        let angle3 = 30;
+        num = 0;
+        for (let i = 1; i <= 12; i++) {
+          angle3 = angle3 + 30;
+
+          if (i % 3 != 0) {
+            continue;
+          }
+          num++;
+          let x =
+            canvasWidth / 2 +
+            thirdLevelRadius * Math.cos((-angle3 * Math.PI) / 180);
+          let y =
+            canvasHeight / 2 +
+            thirdLevelRadius * Math.sin((-angle3 * Math.PI) / 180);
+          thirdLevelVertices.push({ x: x, y: y });
+          createNode(x, y, num);
+        }
+
+        for (let i = 0; i < 12; i++) {
+          if (i % 2 == 0) {
+            ctx.beginPath();
+            ctx.moveTo(secondLevelVertices[i].x, secondLevelVertices[i].y);
+            ctx.lineTo(
+              firstLevelVertices[i / 2].x,
+              firstLevelVertices[i / 2].y
+            );
+            ctx.strokeStyle = '#d3d3d3';
+            ctx.stroke();
+          } else {
+            let j = i - 1;
+            ctx.beginPath();
+            ctx.moveTo(secondLevelVertices[i].x, secondLevelVertices[i].y);
+            ctx.lineTo(
+              firstLevelVertices[j / 2].x,
+              firstLevelVertices[j / 2].y
+            );
+            ctx.strokeStyle = '#d3d3d3';
+            ctx.stroke();
           }
         }
-        return waypoints;
-      }
 
-      function createAnimationVertices() {
-        let random = Math.floor(Math.random() * 11);
-        let secondLevelVertex = secondLevelVertices[random - 1];
-        if (random % 2 != 0) {
-          random = random + 1;
+        for (let i = 0; i < 6; i++) {
+          ctx.beginPath();
+          ctx.moveTo(firstLevelVertices[i].x, firstLevelVertices[i].y);
+          ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
+          ctx.stroke();
         }
-        random = random / 2;
-        let firstLevelVertex = firstLevelVertices[random - 1];
-        let vertices = [];
-        vertices.push(secondLevelVertex);
-        vertices.push(firstLevelVertex);
-        vertices.push({ x: canvasHeight / 2, y: canvasWidth / 2 });
-        return vertices;
-      }
 
-      // calculate incremental points along the path
-      var waypoints = createAnimationVertices();
-      var points = calcWaypoints(waypoints);
-
-      // variable to hold how many frames have elapsed in the animation
-      // t represents each waypoint along the path and is incremented in the animation loop
-      var t = 1;
-
-      // start the animation
-      animate();
-
-      // incrementally draw additional line segments along the path
-      function animate() {
-        if (t < points.length - 1) {
-          requestAnimationFrame(animate);
+        function calcWaypoints(vertices) {
+          let waypoints = [];
+          for (let i = 1; i < vertices.length; i++) {
+            let pt0 = vertices[i - 1];
+            let pt1 = vertices[i];
+            let dx = pt1.x - pt0.x;
+            let dy = pt1.y - pt0.y;
+            for (var j = 0; j < 100; j++) {
+              let x = pt0.x + (dx * j) / 100;
+              let y = pt0.y + (dy * j) / 100;
+              waypoints.push({ x: x, y: y });
+            }
+          }
+          return waypoints;
         }
-        // draw a line segment from the last waypoint
-        // to the current waypoint
-        ctx.beginPath();
-        ctx.moveTo(points[t - 1].x, points[t - 1].y);
-        ctx.lineTo(points[t].x, points[t].y);
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = "#FF0000";
-        ctx.stroke();
-        // increment "t" to get the next waypoint
-        t++;
+
+        function createAnimationVertices() {
+          let random = Math.floor(Math.random() * 4);
+          let thirdLevelVertex = thirdLevelVertices[random];
+          random = (random + 1) * 3;
+          if (random == 12) {
+            random = 0;
+          }
+          let secondLevelVertex = secondLevelVertices[random];
+          random = random - 1;
+          if (random % 2 != 0) {
+            random = random + 1;
+          }
+          random = random / 2;
+          let firstLevelVertex = firstLevelVertices[random];
+          let vertices = [];
+          vertices.push(thirdLevelVertex);
+          vertices.push(secondLevelVertex);
+          vertices.push(firstLevelVertex);
+          vertices.push({ x: canvasHeight / 2, y: canvasWidth / 2 });
+
+          createRedNode(thirdLevelVertex.x, thirdLevelVertex.y, 1);
+          createRedNode(secondLevelVertex.x, secondLevelVertex.y, 1);
+          createRedNode(firstLevelVertex.x, firstLevelVertex.y, 1);
+          return vertices;
+        }
+
+        // calculate incremental points along the path
+        var waypoints1 = createAnimationVertices();
+        var waypoints2 = createAnimationVertices();
+        var waypoints3 = createAnimationVertices();
+        var points1 = calcWaypoints(waypoints1);
+        var points2 = calcWaypoints(waypoints2);
+        var points3 = calcWaypoints(waypoints3);
+
+        // variable to hold how many frames have elapsed in the animation
+        // t represents each waypoint along the path and is incremented in the animation loop
+        var t1 = 1;
+        var t2 = 1;
+        var t3 = 1;
+
+        // incrementally draw additional line segments along the path
+        function animate1() {
+          if (t1 < points1.length - 1) {
+            requestAnimationFrame(animate1);
+          }
+          // draw a line segment from the last waypoint
+          // to the current waypoint
+          if (points1[t1 - 1] && points1[t1]) {
+            ctx.beginPath();
+            ctx.moveTo(points1[t1 - 1].x, points1[t1 - 1].y);
+            ctx.lineTo(points1[t1].x, points1[t1].y);
+
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#FF0000';
+            ctx.stroke();
+          }
+
+          // increment "t" to get the next waypoint
+          t1++;
+        }
+
+        function animate3() {
+          if (t3 < points3.length - 1) {
+            requestAnimationFrame(animate3);
+          }
+          // draw a line segment from the last waypoint
+          // to the current waypoint
+          if (points3[t3 - 1] && points3[t3]) {
+            ctx.beginPath();
+            ctx.moveTo(points3[t3 - 1].x, points3[t3 - 1].y);
+            ctx.lineTo(points3[t3].x, points3[t3].y);
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#FF0000';
+            ctx.stroke();
+          }
+          // increment "t" to get the next waypoint
+          t3++;
+        }
+
+        function animate2() {
+          if (t2 < points2.length - 1) {
+            requestAnimationFrame(animate2);
+          }
+          // draw a line segment from the last waypoint
+          // to the current waypoint
+          if (points2[t2 - 1] && points2[t2]) {
+            ctx.beginPath();
+            ctx.moveTo(points2[t2 - 1].x, points2[t2 - 1].y);
+            ctx.lineTo(points2[t2].x, points2[t2].y);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#FF0000';
+            ctx.stroke();
+          }
+
+          // increment "t" to get the next waypoint
+          t2++;
+        }
+
+        function createNode(x, y, num) {
+          ctx.beginPath();
+          ctx.arc(x, y, outerNodeRadius, 0, 2 * Math.PI);
+
+          ctx.strokeStyle = '#d3d3d3';
+
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(x, y, innerNodeRadius, 0, 2 * Math.PI);
+          ctx.fillStyle = '#d3d3d3';
+          ctx.fill();
+
+          ctx.stroke();
+        }
+
+        function createRedNode(x, y, num) {
+          ctx.beginPath();
+          ctx.arc(x, y, outerNodeRadius, 0, 2 * Math.PI);
+
+          ctx.strokeStyle = '#ff0000';
+
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(x, y, innerNodeRadius, 0, 2 * Math.PI);
+          ctx.fillStyle = '#ff0000';
+          ctx.fill();
+
+          ctx.stroke();
+        }
+
+        function createCentralCircle() {
+          ctx.beginPath();
+          ctx.arc(canvasWidth / 2, canvasHeight / 2, 15, 0, 2 * Math.PI);
+          ctx.strokeStyle = '#ff0000';
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(canvasWidth / 2, canvasHeight / 2, 10, 0, 2 * Math.PI);
+          ctx.fillStyle = '#ff0000';
+          ctx.fill();
+
+          ctx.stroke();
+        }
+
+        // start the animation
+
+        animate1();
+        animate2();
+        animate3();
+        animate1();
+        animate2();
+        animate3();
       }
-
-      function createNode(x, y, num) {
+      setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
-        ctx.arc(x, y, outerNodeRadius, 0, 2 * Math.PI);
-        ctx.font = "20px";
-        ctx.strokeStyle = "#d3d3d3";
-        ctx.fillText(num, x + 10, y);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(x, y, innerNodeRadius, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillStyle = "#d3d3d3";
-        ctx.stroke();
-      }
-
-      function createCentralCircle() {
-        ctx.beginPath();
-        ctx.arc(canvasWidth / 2, canvasHeight / 2, 15, 0, 2 * Math.PI);
-        ctx.strokeStyle = "#d3d3d3";
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(canvasWidth / 2, canvasHeight / 2, 10, 0, 2 * Math.PI);
-        ctx.fillStyle = "#d3d3d3";
-        ctx.fill();
-
-        ctx.stroke();
-      }
+        run();
+      }, 3000);
+      run();
     </script>
   </body>
 </html>
