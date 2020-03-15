@@ -1,0 +1,120 @@
+<html>
+  <body>
+    <canvas id="myCanvas" width="700" height="700" style="border:1px solid #d3d3d3;"> Your browser does not support the HTML5 canvas tag.</canvas>
+    <script>
+      var config = {
+        defaultColorOfNodes: 'grey',
+        linkColorOfNodes: 'grey',
+        connectionColorOfNodes: 'red',
+        colorOfConnectedNodes: 'red',
+        radiusOfNodes: 10,
+        radiusOfCentralNode: 15,
+        distanceBetweenLevels: 80 //number divide by 2
+      };
+      var reqId;
+
+      var canvas = document.getElementById('myCanvas');
+      var ctx = canvas.getContext('2d');
+      var canvasHeight = canvas.height;
+      var canvasWidth = canvas.width;
+      var nodeArr = [];
+      function main() {
+        let levels = [];
+        for (let level = 1; level < 4; level++) {
+          let currentLevel = new Level(level);
+          nodeArr = currentLevel.drawNodes();
+          animate();
+        }
+      }
+      function animate() {
+        reqId = requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        for (var r = 0; r < nodeArr.length; r++) {
+          nodeArr[r].updateNode();
+        }
+      }
+
+      main();
+
+      function drawLine(fromX, fromY, toX, toY) {
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.strokeStyle = config.linkColorOfNodes;
+        ctx.stroke();
+      }
+
+      function Level(levelNumber) {
+        this.levelNumber = levelNumber;
+        this.vertices = [];
+        this.drawNodes = function() {
+          let numberOfNodes = this.levelNumber * 6;
+          let angleDifference = 360 / numberOfNodes;
+          let angle = 0;
+          let nodeArr = [];
+          for (let i = 0; i < numberOfNodes; i++) {
+            angle = angle + angleDifference;
+            let x = canvasWidth / 2 + Math.cos((Math.PI * angle) / 180.0);
+            let y = canvasHeight / 2 + Math.sin((Math.PI * angle) / 180.0);
+            this.vertices.push(new Node(x, y, config.radiusOfNodes, angle));
+          }
+          return this.vertices;
+        };
+      }
+
+      function Node(x, y, radius, angle) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.angle = angle;
+        this.dx = canvasWidth / 2;
+        this.dy = canvasHeight / 2;
+        this.distanceFromCenter = 0;
+
+        this.drawNode = function() {
+          let outerNodeRadius = this.radius;
+          let innerNodeRadius = outerNodeRadius - 5;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, outerNodeRadius, 0, 2 * Math.PI);
+          ctx.strokeStyle = config.defaultColorOfNodes;
+          ctx.stroke();
+          //inner circle of the node
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, innerNodeRadius, 0, 2 * Math.PI);
+          ctx.fillStyle = config.defaultColorOfNodes;
+          ctx.fill();
+          ctx.stroke();
+        };
+
+        this.updateNode = function() {
+          console.log(dist(canvasWidth / 2, canvasHeight / 2, this.dx, this.dy));
+          this.dx = Math.cos((Math.PI * angle) / 180.0) + this.x;
+          this.dy = Math.sin((Math.PI * angle) / 180.0) + this.y;
+          this.x = this.dx;
+          this.y = this.dy;
+          this.drawNode();
+          //drawLine(canvasWidth / 2, canvasHeight / 2, this.dx, this.y);
+          this.distanceFromCenter = dist(canvasWidth / 2, canvasHeight / 2, this.dx, this.dy);
+          if (this.distanceFromCenter > config.distanceBetweenLevels) {
+            cancelAnimationFrame(reqId);
+          }
+        };
+      }
+
+      function diff(num1, num2) {
+        if (num1 > num2) {
+          return num1 - num2;
+        } else {
+          return num2 - num1;
+        }
+      }
+
+      function dist(x1, y1, x2, y2) {
+        var deltaX = diff(x1, x2);
+        var deltaY = diff(y1, y2);
+        var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        return dist;
+      }
+    </script>
+  </body>
+</html>
